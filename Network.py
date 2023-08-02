@@ -21,28 +21,25 @@ input1.u[int(tm * 3/5 / dt) : int(tm * 5/5 / dt)] = Ia * 1.5
 
 input2 = InputNeuron("input2")
 input2.u[int(tm * 1/5 / dt) : int(tm * 3/5 / dt)] = Ia
-input2.u[int(tm * 2/5 / dt) : int(tm * 5/5 / dt)] = Ia * 2/3
+input2.u[int(tm * 3/5 / dt) : int(tm * 5/5 / dt)] = Ia * 0.5
 # input2.u[[i for i in range(int(tm * 1/5 / dt), int(tm * 3/5 / dt), 100)]] = 1
 # input2.u[[i for i in range(int(tm * 3/5 / dt), int(tm * 5/5 / dt), 125)]] = 1
 
 
 input1.link(intgr1, 1)
-input1.link(intgr2, 0.5)
-intgr1.link(intgr2, 2)
-intgr1.link(intgr1, 1)
-print(c.n1 for c in intgr1.inputs)
+input1.link(intgr2, 0.99)
+intgr1.link(intgr2, 1.1)
+intgr1.link(intgr1, 0.01)
+# print([(c.n1.name, c.n2.name) for c in intgr1.inputs])
 
 input2.link(intgr2, 1)
-input2.link(intgr1, 0.5)
-intgr2.link(intgr1, 0)
-intgr2.link(intgr2, 1)
+input2.link(intgr1, 0.99)
+intgr2.link(intgr1, 1.1)
+intgr2.link(intgr2, 0.01)
 
 
 inputs = [input1, input2]
 intgrs = [intgr1, intgr2]
-
-print(len(intgr1.inputs), len(intgr1.outputs))
-print(len(intgr2.inputs), len(intgr2.outputs))
 
 for t in range(len(tVector) - 1):
     for currNeuron in intgrs:
@@ -68,4 +65,5 @@ ax[3].plot(tVector, input2.u)
 ax[4].plot(tVector, intgr2.x)
 # ax[5].plot(tVector, intgr2.dx)
 
+# plt.plot(intgr1.x, intgr2.x)
 plt.show()
