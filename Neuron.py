@@ -3,8 +3,8 @@ import numpy as np
 from Connection import Connection
 
 class Neuron():
-    tm = 0.25
-    dt = 0.0001
+    tm = 0.1
+    dt = 0.00001
 
     def __init__(self):
         pass
@@ -35,7 +35,7 @@ class IntgrNeuron(Neuron):
     def __init__(self, name):
         self.inputs = []
         self.outputs = []
-        
+
         self.name = name
         self.x = np.zeros(int(self.tm / self.dt))
         self.dx = np.zeros(int(self.tm / self.dt))
