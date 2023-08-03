@@ -15,8 +15,8 @@ ax = plt.figure().add_subplot(projection='3d')
 #     network.run()
 #     ax.plot(network.intgrNeurons[0].x, network.intgrNeurons[1].x, network.intgrNeurons[2].x)
 
-for i in range(11):
-    network = Network(64, 1 + i / 20)
+for i in np.linspace(1.0, 1.5, 10):
+    network = Network(32, i)
     network.run()
     neurons = np.array([neuron.x for neuron in network.intgrNeurons])
     # print(neurons)
