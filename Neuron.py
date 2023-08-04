@@ -4,7 +4,7 @@ from Connection import Connection
 
 class Neuron():
     tm = 0.1
-    dt = 0.00001
+    dt = 0.000001
 
     def __init__(self):
         pass

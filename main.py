@@ -7,54 +7,45 @@ import pprint
 
 from Network import Network
 
-# ax = plt.figure().add_subplot()
-ax = plt.figure().add_subplot(projection='3d')
+def PCA(data):
+    mean = np.mean(data)
+    means = npm.repmat(mean, len(data), 1)
+    norm = data - means
 
-# for i in range(21):
-#     network = Network(3, 1 + i / 20)
-#     network.run()
-#     ax.plot(network.intgrNeurons[0].x, network.intgrNeurons[1].x, network.intgrNeurons[2].x)
-
-for i in np.linspace(1.0, 1.5, 10):
-    network = Network(32, i)
-    network.run()
-    neurons = np.array([neuron.x for neuron in network.intgrNeurons])
-    # print(neurons)
-
-    mean = np.mean(neurons)
-    means = npm.repmat(mean, len(neurons), 1)
-    norm = neurons - means
-    # print(means)
-    # print(norm.shape)
-
-    cov = (norm @ norm.T) / len(neurons)
-    # print(cov.shape)
-    # im = plt.imshow(cov)
-    # plt.show()
-
+    cov = (norm @ norm.T) / len(data)
     (d, v) = npl.eig(cov)
     idx = d.argsort()[::-1]
     dsort = d[idx]
     vsort = v[:,idx]
-    # print(idx)
     
     varExplained = np.cumsum(dsort)/sum(dsort)
     normProj = vsort.T[:3, :] @ norm
-    # print(normProj.shape)
+    return normProj 
 
-    # for i in range(len(normProj[0])):
-    #     x = normProj[0][i]
-    #     y = normProj[1][i]
-    #     z = normProj[2][i]
-    #     ax.plot(x, y, z, marker = ",")
-    threshold = int(network.tm / network.dt)
+# ax = plt.figure().add_subplot()
+ax = plt.figure().add_subplot(projection='3d')
+
+# for i in [1.2, 1.3]:
+for i in np.linspace(1.0, 1.5, 30):
+    network = Network(3, i)
+    network.run()
+
+    neurons = np.array([neuron.x for neuron in network.intgrNeurons])
+    reduced = PCA(neurons)
     ax.plot(
-        normProj[0][:threshold], 
-        normProj[1][:threshold], 
-        normProj[2][:threshold] 
+        reduced[0],
+        reduced[1], 
+        reduced[2]
         # color = (148/255, 0/255, 211/255, (i + 1) / 101 + 0.25)
     )
-ax.legend()
 
-plt.set_cmap("viridis")
+    # dervtvs = np.array([neuron.dx for neuron in network.intgrNeurons])
+    # reduced = PCA(dervtvs)
+    # ax.plot(
+    #     reduced[0],
+    #     reduced[1], 
+    #     reduced[2]
+    #     # color = (148/255, 0/255, 211/255, (i + 1) / 101 + 0.25)
+    # )
+
 plt.show()
