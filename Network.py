@@ -6,7 +6,7 @@ from Neuron import InputNeuron, IntgrNeuron
 
 class Network():
     tm = 0.1
-    dt = 0.000001
+    dt = 0.00001
     Ia = 1
     tau = 0.005
 
@@ -19,34 +19,39 @@ class Network():
         self.inputNeurons = []
         self.intgrNeurons = []
 
-        for d in range(n):
+        for d in range(self.n):
             self.intgrNeurons.append(IntgrNeuron("intgr" + str(d)))
             self.inputNeurons.append(InputNeuron("input" + str(d)))
             self.inputNeurons[d].u[:] = self.Ia
             self.inputNeurons[d].u[int(self.tm * d/n / self.dt) : int(self.tm * (d+1)/n / self.dt)] = self.Ia * spikeRatio
+    
+    def connectBasic(self):
+        for d in range(self.n):
+            self.inputNeurons[d].link(self.intgrNeurons[d], 1)
+            self.inputNeurons[d].link(self.intgrNeurons[d - 1], 0.99)
+            self.inputNeurons[d].link(self.intgrNeurons[(d + 1) % self.n], 0.99)
 
-        xWeights = np.linspace(-0.523 * (n/2 - 1), 0.523 * n/2, n)
+            self.intgrNeurons[d].link(self.intgrNeurons[d - 1], 0.99)
+            self.intgrNeurons[d].link(self.intgrNeurons[(d + 1) % self.n], 0.99)
+            self.intgrNeurons[d].link(self.intgrNeurons[d], 0.01)
+
+    def connectFully(self):
+        xWeights = np.linspace(-0.523 * (self.n/2 - 1), 0.523 * self.n/2, self.n)
         yWeights = []
         for x in xWeights:
             yWeights.append(self.fWeights(x))
-        yWeights = yWeights[n//2 - 1:] + yWeights[:n//2 - 1]
+        yWeights = yWeights[self.n//2 - 1:] + yWeights[:self.n//2 - 1]
         weightsMatrix = []
         
-        for d in range(n):
+        for d in range(self.n):
             self.inputNeurons[d].link(self.intgrNeurons[d], 1)
             # self.inputNeurons[d].link(self.intgrNeurons[d - 1], 0.99)
             # self.inputNeurons[d].link(self.intgrNeurons[(d + 1) % n], 0.99)
 
-            for d2 in range(n):
+            for d2 in range(self.n):
                 self.intgrNeurons[d].link(self.intgrNeurons[d2], yWeights[d2])
             # weightsMatrix.append(yWeights)
             yWeights = [yWeights[-1]] + yWeights[:-1]
-
-            # self.intgrNeurons[d].link(self.intgrNeurons[d - 1], 0.99)
-            # self.intgrNeurons[d].link(self.intgrNeurons[(d + 1) % n], 0.99)
-            # self.intgrNeurons[d].link(self.intgrNeurons[d], 0.01)
-            
-        # print([(c.n1.name, c.w) for c in self.intgrNeurons[2].inputs])
         # plt.imshow(weightsMatrix)
         # plt.show()
 
