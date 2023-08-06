@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import math
+import random
 
 from Neuron import InputNeuron, IntgrNeuron
 
@@ -8,7 +9,7 @@ class Network():
     tm = 0.1
     dt = 0.00001
     Ia = 1
-    tau = 0.005
+    tau = 0.01
 
     def fWeights(self, x):
         return 1.25 * (math.exp(-1/2 * (x / 1.01)**2) - math.exp(-1/2 * (x / 0.202)**2))
@@ -79,7 +80,7 @@ class Network():
                 currNeuron.dx[t + 1] = dx
                 currNeuron.x[t + 1] = currNeuron.x[t] + dx
 
-    def plot(self, showDx, n):
+    def plot(self, n, showDx = False):
         if showDx:
             fig, ax = plt.subplots(n * 3)
             for d in range(n):
@@ -94,6 +95,27 @@ class Network():
                 ax[d * 2 + 1].plot(self.tVector, self.intgrNeurons[d].x)
                 ax[d * 2].legend()
 
+    def lesion(self, type, damage, num = 1, set = -1):
+        if set == -1:
+            lesionNeurons = random.sample(self.intgrNeurons, num)
+        else:
+            lesionNeurons = [self.intgrNeurons[set]]
+        
+        if type == "connectionsIn":
+            for lesionNeuron in lesionNeurons:
+                for c in lesionNeuron.inputs:
+                    c.w *= (1 - damage)
+        elif type == "connectionsOut":
+            for lesionNeuron in lesionNeurons:
+                for c in lesionNeuron.outputs:
+                    c.w *= (1 - damage)
+        elif type == "connectionsAll":
+            for lesionNeuron in lesionNeurons:
+                for c in lesionNeuron.inputs:
+                    c.w *= (1 - damage)
+                for c in lesionNeuron.outputs:
+                    c.w *= (1 - damage)
+
 # temp = Network(
 #     n = 8, 
 #     spikeRatio = 1.5, 
@@ -101,6 +123,11 @@ class Network():
 #     pattern = 1
 # )
 # temp.connectFully()
+# temp.lesion(
+#     type = "connectionsAll",
+#     damage = 1,
+#     set = temp.n // 2
+# )
 # temp.run()
-# temp.plot(False, 8)
+# temp.plot(8, False)
 # plt.show()
