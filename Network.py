@@ -94,13 +94,13 @@ class Network():
                 ax[d * 2 + 1].plot(self.tVector, self.intgrNeurons[d].x)
                 ax[d * 2].legend()
 
-temp = Network(
-    n = 8, 
-    spikeRatio = 1.5, 
-    spatialFrq = 2, 
-    pattern = 1
-)
-temp.connectFully()
-temp.run()
-temp.plot(False, 8)
-plt.show()
+# temp = Network(
+#     n = 8, 
+#     spikeRatio = 1.5, 
+#     spatialFrq = 2, 
+#     pattern = 1
+# )
+# temp.connectFully()
+# temp.run()
+# temp.plot(False, 8)
+# plt.show()
